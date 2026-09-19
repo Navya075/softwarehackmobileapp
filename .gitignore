@@ -1,0 +1,25 @@
+# Environment and Credentials
+.env
+.env.local
+*.env
+*service-account*.json
+firebase-key*.json
+service-account*.json
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.coverage
+htmlcov/
+*.egg-info/
+.venv/
+venv/
+
+# Node / React Native / Expo
+node_modules/
+.expo/
+dist/
+web-build/

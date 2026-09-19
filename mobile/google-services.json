@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "379714134704",
+    "project_id": "volt-flow-560cc",
+    "storage_bucket": "volt-flow-560cc.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:379714134704:android:4b5d10af15272f29df1175",
+        "android_client_info": {
+          "package_name": "com.voltflow.evowner"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDZ9rUb9CpQGZU0ZOS73LciRuJ36EOdOKQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
