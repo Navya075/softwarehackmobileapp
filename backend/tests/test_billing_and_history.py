@@ -19,6 +19,15 @@ def test_billing_endpoints(client):
     assert res_one.status_code == 200
     assert res_one.json()["bill_id"] == bill_id
 
+    # Pay bill demo payment
+    res_pay = client.post(f"/api/billing/pay/{bill_id}", json={"payment_method": "UPI (Demo)"})
+    assert res_pay.status_code == 200
+    paid_bill = res_pay.json()
+    assert paid_bill["status"] == "paid"
+    assert paid_bill["payment_method"] == "UPI (Demo)"
+    assert paid_bill.get("invoice_number") is not None
+
+
 def test_history_endpoints(client):
     res = client.get("/api/history")
     assert res.status_code == 200

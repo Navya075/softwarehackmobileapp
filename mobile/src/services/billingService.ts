@@ -13,8 +13,19 @@ export interface BackendBillItem {
   service_fee: number;
   total_cost: number;
   currency: string;
-  status: string;
+  status: string; // 'paid' | 'pending'
   created_at: string;
+  invoice_number?: string;
+  payment_method?: string;
+  paid_at?: string;
+  duration?: string;
+  rate_per_kwh?: number;
+  customer_name?: string;
+  vehicle_model?: string;
+  license_plate?: string;
+  start_time?: string;
+  end_time?: string;
+  location?: string;
 }
 
 export interface BackendBillingSummary {
@@ -36,5 +47,11 @@ export const billingService = {
 
   async getInvoice(billId: string): Promise<BackendBillItem> {
     return await apiClient.get<BackendBillItem>(`/api/billing/invoices/${billId}`);
+  },
+
+  async payBill(billId: string, paymentMethod: string = 'UPI (Demo)'): Promise<BackendBillItem> {
+    return await apiClient.post<BackendBillItem>(`/api/billing/pay/${billId}`, {
+      payment_method: paymentMethod,
+    });
   },
 };

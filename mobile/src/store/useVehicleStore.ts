@@ -5,6 +5,23 @@ import { vehicleService } from '../services/vehicleService';
 
 const VEHICLE_STORAGE_KEY = '@voltflow_active_vehicle';
 
+async function safeStorageGet(key: string): Promise<string | null> {
+  try {
+    return await AsyncStorage.getItem(key);
+  } catch (err) {
+    console.warn(`[STORAGE] Failed to read "${key}" from AsyncStorage:`, err);
+    return null;
+  }
+}
+
+async function safeStorageSet(key: string, value: string): Promise<void> {
+  try {
+    await AsyncStorage.setItem(key, value);
+  } catch (err) {
+    console.warn(`[STORAGE] Failed to save "${key}" to AsyncStorage:`, err);
+  }
+}
+
 interface VehicleState {
   activeVehicle: VehicleProfile;
   telemetry: VehicleTelemetry;
@@ -67,9 +84,9 @@ export const useVehicleStore = create<VehicleState>((set, get) => ({
   emergencyBoostActive: false,
 
   fetchVehicles: async () => {
-    try {
-      const stored = await AsyncStorage.getItem(VEHICLE_STORAGE_KEY);
-      if (stored) {
+    const stored = await safeStorageGet(VEHICLE_STORAGE_KEY);
+    if (stored) {
+      try {
         const cached = JSON.parse(stored);
         set((state) => ({
           activeVehicle: cached,
@@ -79,9 +96,9 @@ export const useVehicleStore = create<VehicleState>((set, get) => ({
             model: cached.model || state.telemetry.model,
           },
         }));
+      } catch {
+        // ignore parse error
       }
-    } catch {
-      // ignore
     }
 
     try {
@@ -124,7 +141,7 @@ export const useVehicleStore = create<VehicleState>((set, get) => ({
           },
         }));
 
-        await AsyncStorage.setItem(VEHICLE_STORAGE_KEY, JSON.stringify(newVehicle));
+        await safeStorageSet(VEHICLE_STORAGE_KEY, JSON.stringify(newVehicle));
       }
     } catch {
       // offline fallback

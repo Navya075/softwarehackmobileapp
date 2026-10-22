@@ -151,6 +151,23 @@
       "onboarding_completed": true,
       "created_at": "2026-09-19T02:11:27.729148+00:00",
       "updated_at": "2026-09-19T02:11:27.729148+00:00"
+    },
+    "5oy1ERQxP8hkntXWBnrMmnrPq6o1": {
+      "user_id": "5oy1ERQxP8hkntXWBnrMmnrPq6o1",
+      "name": "Ramya",
+      "email": "ramya@gmail.com",
+      "phone": "+1 (555) 234-5678",
+      "address": "San Francisco, CA",
+      "building_name": null,
+      "unit_number": null,
+      "locality": null,
+      "city": null,
+      "pincode": null,
+      "has_home_charger": true,
+      "context": "residential",
+      "onboarding_completed": true,
+      "created_at": "2026-09-19T05:30:38.921576+00:00",
+      "updated_at": "2026-09-19T05:30:38.921576+00:00"
     }
   },
   "vehicles": {
@@ -574,7 +591,7 @@
     },
     "EV-001": {
       "vehicle_id": "EV-001",
-      "user_id": "qGP0657vOOVheD0iq39SGo4wAxu1",
+      "user_id": "5oy1ERQxP8hkntXWBnrMmnrPq6o1",
       "vehicle_type": "car",
       "manufacturer": "Tesla",
       "model": "Model 3 Long Range",
@@ -592,8 +609,8 @@
       "estimated_range_km": 156.0,
       "plugged_in": true,
       "charging_status": "charging",
-      "created_at": "2026-09-19T02:40:09.922746+00:00",
-      "updated_at": "2026-09-19T02:40:09.922746+00:00"
+      "created_at": "2026-09-19T05:30:41.278456+00:00",
+      "updated_at": "2026-09-19T05:30:41.278456+00:00"
     },
     "EV-13F68D": {
       "vehicle_id": "EV-13F68D",
@@ -686,6 +703,29 @@
       "charging_status": "idle",
       "created_at": "2026-09-19T02:40:34.656920+00:00",
       "updated_at": "2026-09-19T02:40:34.656920+00:00"
+    },
+    "EV-725CA9": {
+      "vehicle_id": "EV-725CA9",
+      "user_id": "qGP0657vOOVheD0iq39SGo4wAxu1",
+      "vehicle_type": "car",
+      "manufacturer": "Hyundai",
+      "model": "Ioniq 5 AWD",
+      "variant": "Dual Motor AWD",
+      "year": 2025,
+      "battery_capacity_kwh": 79.0,
+      "usable_battery_capacity_kwh": 75.1,
+      "battery_health_percent": 94.0,
+      "current_soc": 50.0,
+      "target_soc": 85.0,
+      "max_charging_power_kw": 11.0,
+      "ac_charging_power_kw": 11.0,
+      "dc_charging_power_kw": 170.0,
+      "connector": "CCS2 / Type 2",
+      "estimated_range_km": 244.1,
+      "plugged_in": false,
+      "charging_status": "idle",
+      "created_at": "2026-09-19T03:35:18.323127+00:00",
+      "updated_at": "2026-09-19T03:35:18.323127+00:00"
     }
   },
   "chargingPreferences": {
@@ -735,6 +775,19 @@
       "departure_time": "7:30 AM",
       "prefer_renewable": false,
       "prefer_lower_cost": true,
+      "allow_smart_charging": true,
+      "allow_charging_delay": true,
+      "emergency_charging": false,
+      "charge_faster": false,
+      "departure_readiness_guarantee": true
+    },
+    "qGP0657vOOVheD0iq39SGo4wAxu1": {
+      "user_id": "qGP0657vOOVheD0iq39SGo4wAxu1",
+      "target_soc": 85.0,
+      "departure_date": "Tomorrow",
+      "departure_time": "7:30 AM",
+      "prefer_renewable": true,
+      "prefer_lower_cost": false,
       "allow_smart_charging": true,
       "allow_charging_delay": true,
       "emergency_charging": false,
@@ -898,6 +951,291 @@
       "action_label": null,
       "metadata": {
         "vehicle_id": "EV-003"
+      }
+    },
+    "notif_456bac6c": {
+      "id": "notif_456bac6c",
+      "user_id": "user_demo_01",
+      "timestamp": "Just now",
+      "type": "charging_completed",
+      "severity": "success",
+      "title": "Charging Completed",
+      "message": "Your Hyundai Ioniq 5 AWD has completed charging.",
+      "read": false,
+      "action_label": null,
+      "metadata": {
+        "vehicle_id": "EV-002",
+        "soc": 80.0
+      }
+    },
+    "notif_b567b8be": {
+      "id": "notif_b567b8be",
+      "user_id": "user_demo_01",
+      "timestamp": "Just now",
+      "type": "charging_completed",
+      "severity": "success",
+      "title": "Charging Completed",
+      "message": "Your Hyundai Ioniq 5 AWD has completed charging.",
+      "read": false,
+      "action_label": null,
+      "metadata": {
+        "vehicle_id": "EV-002",
+        "soc": 80.0
+      }
+    },
+    "notif_de594047": {
+      "id": "notif_de594047",
+      "user_id": "user_demo_01",
+      "timestamp": "Just now",
+      "type": "charging_completed",
+      "severity": "success",
+      "title": "Charging Completed",
+      "message": "Your Hyundai Ioniq 5 AWD has completed charging.",
+      "read": false,
+      "action_label": null,
+      "metadata": {
+        "vehicle_id": "EV-002",
+        "soc": 80.0
+      }
+    },
+    "notif_8e503813": {
+      "id": "notif_8e503813",
+      "user_id": "user_demo_01",
+      "timestamp": "Just now",
+      "type": "charging_completed",
+      "severity": "success",
+      "title": "Charging Completed",
+      "message": "Your Hyundai Ioniq 5 AWD has completed charging.",
+      "read": false,
+      "action_label": null,
+      "metadata": {
+        "vehicle_id": "EV-002",
+        "soc": 80.0
+      }
+    },
+    "notif_292a4e9a": {
+      "id": "notif_292a4e9a",
+      "user_id": "user_demo_01",
+      "timestamp": "Just now",
+      "type": "charging_completed",
+      "severity": "success",
+      "title": "Charging Completed",
+      "message": "Your Hyundai Ioniq 5 AWD has completed charging.",
+      "read": false,
+      "action_label": null,
+      "metadata": {
+        "vehicle_id": "EV-002",
+        "soc": 80.0
+      }
+    },
+    "notif_9fe69833": {
+      "id": "notif_9fe69833",
+      "user_id": "user_demo_01",
+      "timestamp": "Just now",
+      "type": "charging_completed",
+      "severity": "success",
+      "title": "Charging Completed",
+      "message": "Your Hyundai Ioniq 5 AWD has completed charging.",
+      "read": false,
+      "action_label": null,
+      "metadata": {
+        "vehicle_id": "EV-002",
+        "soc": 80.0
+      }
+    },
+    "notif_1fe7f028": {
+      "id": "notif_1fe7f028",
+      "user_id": "user_demo_01",
+      "timestamp": "Just now",
+      "type": "charging_completed",
+      "severity": "success",
+      "title": "Charging Completed",
+      "message": "Your Hyundai Ioniq 5 AWD has completed charging.",
+      "read": false,
+      "action_label": null,
+      "metadata": {
+        "vehicle_id": "EV-002",
+        "soc": 80.0
+      }
+    },
+    "notif_108752f5": {
+      "id": "notif_108752f5",
+      "user_id": "user_demo_01",
+      "timestamp": "Just now",
+      "type": "charging_completed",
+      "severity": "success",
+      "title": "Charging Completed",
+      "message": "Your Hyundai Ioniq 5 AWD has completed charging.",
+      "read": false,
+      "action_label": null,
+      "metadata": {
+        "vehicle_id": "EV-002",
+        "soc": 80.0
+      }
+    },
+    "notif_48a4438c": {
+      "id": "notif_48a4438c",
+      "user_id": "user_demo_01",
+      "timestamp": "Just now",
+      "type": "charging_completed",
+      "severity": "success",
+      "title": "Charging Completed",
+      "message": "Your Hyundai Ioniq 5 AWD has completed charging.",
+      "read": false,
+      "action_label": null,
+      "metadata": {
+        "vehicle_id": "EV-002",
+        "soc": 80.0
+      }
+    },
+    "notif_c33dd96c": {
+      "id": "notif_c33dd96c",
+      "user_id": "user_demo_01",
+      "timestamp": "Just now",
+      "type": "charging_completed",
+      "severity": "success",
+      "title": "Charging Completed",
+      "message": "Your Hyundai Ioniq 5 AWD has completed charging.",
+      "read": false,
+      "action_label": null,
+      "metadata": {
+        "vehicle_id": "EV-002",
+        "soc": 80.0
+      }
+    },
+    "notif_b2f149bb": {
+      "id": "notif_b2f149bb",
+      "user_id": "user_demo_01",
+      "timestamp": "Just now",
+      "type": "charging_completed",
+      "severity": "success",
+      "title": "Charging Completed",
+      "message": "Your Hyundai Ioniq 5 AWD has completed charging.",
+      "read": false,
+      "action_label": null,
+      "metadata": {
+        "vehicle_id": "EV-002",
+        "soc": 80.0
+      }
+    },
+    "notif_78086822": {
+      "id": "notif_78086822",
+      "user_id": "user_demo_01",
+      "timestamp": "Just now",
+      "type": "charging_completed",
+      "severity": "success",
+      "title": "Charging Completed",
+      "message": "Your Hyundai Ioniq 5 AWD has completed charging.",
+      "read": false,
+      "action_label": null,
+      "metadata": {
+        "vehicle_id": "EV-002",
+        "soc": 80.0
+      }
+    },
+    "notif_3984db44": {
+      "id": "notif_3984db44",
+      "user_id": "user_demo_01",
+      "timestamp": "Just now",
+      "type": "charging_completed",
+      "severity": "success",
+      "title": "Charging Completed",
+      "message": "Your Hyundai Ioniq 5 AWD has completed charging.",
+      "read": false,
+      "action_label": null,
+      "metadata": {
+        "vehicle_id": "EV-002",
+        "soc": 80.0
+      }
+    },
+    "notif_69d15e37": {
+      "id": "notif_69d15e37",
+      "user_id": "user_demo_01",
+      "timestamp": "Just now",
+      "type": "charging_completed",
+      "severity": "success",
+      "title": "Charging Completed",
+      "message": "Your Hyundai Ioniq 5 AWD has completed charging.",
+      "read": false,
+      "action_label": null,
+      "metadata": {
+        "vehicle_id": "EV-002",
+        "soc": 80.0
+      }
+    },
+    "notif_93842cad": {
+      "id": "notif_93842cad",
+      "user_id": "user_demo_01",
+      "timestamp": "Just now",
+      "type": "charging_completed",
+      "severity": "success",
+      "title": "Charging Completed",
+      "message": "Your Hyundai Ioniq 5 AWD has completed charging.",
+      "read": false,
+      "action_label": null,
+      "metadata": {
+        "vehicle_id": "EV-002",
+        "soc": 80.0
+      }
+    },
+    "notif_692f410a": {
+      "id": "notif_692f410a",
+      "user_id": "user_demo_01",
+      "timestamp": "Just now",
+      "type": "charging_completed",
+      "severity": "success",
+      "title": "Charging Completed",
+      "message": "Your Hyundai Ioniq 5 AWD has completed charging.",
+      "read": false,
+      "action_label": null,
+      "metadata": {
+        "vehicle_id": "EV-002",
+        "soc": 80.0
+      }
+    },
+    "notif_74444f9d": {
+      "id": "notif_74444f9d",
+      "user_id": "user_demo_01",
+      "timestamp": "Just now",
+      "type": "charging_completed",
+      "severity": "success",
+      "title": "Charging Completed",
+      "message": "Your Hyundai Ioniq 5 AWD has completed charging.",
+      "read": false,
+      "action_label": null,
+      "metadata": {
+        "vehicle_id": "EV-002",
+        "soc": 80.0
+      }
+    },
+    "notif_b2822e4f": {
+      "id": "notif_b2822e4f",
+      "user_id": "user_demo_01",
+      "timestamp": "Just now",
+      "type": "charging_completed",
+      "severity": "success",
+      "title": "Charging Completed",
+      "message": "Your Hyundai Ioniq 5 AWD has completed charging.",
+      "read": false,
+      "action_label": null,
+      "metadata": {
+        "vehicle_id": "EV-002",
+        "soc": 80.0
+      }
+    },
+    "notif_a6bd3d2d": {
+      "id": "notif_a6bd3d2d",
+      "user_id": "user_demo_01",
+      "timestamp": "Just now",
+      "type": "charging_completed",
+      "severity": "success",
+      "title": "Charging Completed",
+      "message": "Your Hyundai Ioniq 5 AWD has completed charging.",
+      "read": false,
+      "action_label": null,
+      "metadata": {
+        "vehicle_id": "EV-002",
+        "soc": 80.0
       }
     }
   }

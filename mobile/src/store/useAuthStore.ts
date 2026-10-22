@@ -6,6 +6,32 @@ import { userService, BackendUserProfile } from '../services/userService';
 import { useVehicleStore } from './useVehicleStore';
 
 const USER_STORAGE_KEY = '@voltflow_user_profile';
+const ACTIVE_VEHICLE_STORAGE_KEY = '@voltflow_active_vehicle';
+
+async function safeStorageGet(key: string): Promise<string | null> {
+  try {
+    return await AsyncStorage.getItem(key);
+  } catch (err) {
+    console.warn(`[STORAGE] Failed to read "${key}" from AsyncStorage:`, err);
+    return null;
+  }
+}
+
+async function safeStorageSet(key: string, value: string): Promise<void> {
+  try {
+    await AsyncStorage.setItem(key, value);
+  } catch (err) {
+    console.warn(`[STORAGE] Failed to save "${key}" to AsyncStorage:`, err);
+  }
+}
+
+async function safeStorageRemove(key: string): Promise<void> {
+  try {
+    await AsyncStorage.removeItem(key);
+  } catch (err) {
+    console.warn(`[STORAGE] Failed to remove "${key}" from AsyncStorage:`, err);
+  }
+}
 
 interface AuthState {
   user: UserProfile | null;
@@ -55,68 +81,73 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     set({ isLoading: true });
 
     // 1. Fast local cache load for UI responsiveness
-    try {
-      const stored = await AsyncStorage.getItem(USER_STORAGE_KEY);
-      if (stored) {
+    const stored = await safeStorageGet(USER_STORAGE_KEY);
+    if (stored) {
+      try {
         const parsed = JSON.parse(stored) as UserProfile;
         set({
           user: parsed,
           isAuthenticated: true,
           isOnboarded: parsed.completedOnboarding ?? true,
         });
+      } catch {
+        // ignore parse error
       }
-    } catch {
-      // ignore
     }
 
     // 2. React to Firebase Auth state as the single source of truth
     authService.onUserChanged(async (fbUser) => {
-      if (fbUser) {
-        try {
-          const backendProfile = await userService.getProfile();
-          const user: UserProfile = {
-            id: fbUser.uid,
-            email: fbUser.email || get().user?.email || '',
-            displayName: backendProfile?.name || fbUser.displayName || get().user?.displayName || 'EV Owner',
-            phone: backendProfile?.phone || get().user?.phone,
-            address: backendProfile?.address || get().user?.address,
-            propertyType: (backendProfile?.context as any) || get().user?.propertyType || 'residential',
-            costPriority: 'balanced',
-            completedOnboarding: backendProfile?.onboarding_completed ?? get().user?.completedOnboarding ?? true,
-          };
+      try {
+        if (fbUser) {
+          try {
+            const backendProfile = await userService.getProfile();
+            const user: UserProfile = {
+              id: fbUser.uid,
+              email: fbUser.email || get().user?.email || '',
+              displayName: backendProfile?.name || fbUser.displayName || get().user?.displayName || 'EV Owner',
+              phone: backendProfile?.phone || get().user?.phone,
+              address: backendProfile?.address || get().user?.address,
+              propertyType: (backendProfile?.context as any) || get().user?.propertyType || 'residential',
+              costPriority: 'balanced',
+              completedOnboarding: backendProfile?.onboarding_completed ?? get().user?.completedOnboarding ?? true,
+            };
+            set({
+              user,
+              isAuthenticated: true,
+              isOnboarded: user.completedOnboarding,
+              isLoading: false,
+            });
+            await safeStorageSet(USER_STORAGE_KEY, JSON.stringify(user));
+          } catch {
+            const fallbackUser: UserProfile = get().user || {
+              id: fbUser.uid,
+              email: fbUser.email || '',
+              displayName: fbUser.displayName || 'EV Owner',
+              propertyType: 'residential',
+              costPriority: 'balanced',
+              completedOnboarding: true,
+            };
+            set({
+              user: fallbackUser,
+              isAuthenticated: true,
+              isOnboarded: fallbackUser.completedOnboarding,
+              isLoading: false,
+            });
+          }
+        } else {
+          await safeStorageRemove(USER_STORAGE_KEY);
+          await safeStorageRemove(ACTIVE_VEHICLE_STORAGE_KEY);
+          useVehicleStore.getState().resetVehicleState();
           set({
-            user,
-            isAuthenticated: true,
-            isOnboarded: user.completedOnboarding,
-            isLoading: false,
-          });
-          await AsyncStorage.setItem(USER_STORAGE_KEY, JSON.stringify(user));
-        } catch {
-          const fallbackUser: UserProfile = get().user || {
-            id: fbUser.uid,
-            email: fbUser.email || '',
-            displayName: fbUser.displayName || 'EV Owner',
-            propertyType: 'residential',
-            costPriority: 'balanced',
-            completedOnboarding: true,
-          };
-          set({
-            user: fallbackUser,
-            isAuthenticated: true,
-            isOnboarded: fallbackUser.completedOnboarding,
+            user: null,
+            isAuthenticated: false,
+            isOnboarded: false,
             isLoading: false,
           });
         }
-      } else {
-        await AsyncStorage.removeItem(USER_STORAGE_KEY);
-        await AsyncStorage.removeItem('@voltflow_active_vehicle');
-        useVehicleStore.getState().resetVehicleState();
-        set({
-          user: null,
-          isAuthenticated: false,
-          isOnboarded: false,
-          isLoading: false,
-        });
+      } catch (authCallbackErr) {
+        console.warn('[AUTH STORE] Error in onUserChanged callback:', authCallbackErr);
+        set({ isLoading: false });
       }
     });
   },
@@ -131,7 +162,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
           isAuthenticated: true,
           isOnboarded: user.completedOnboarding,
         });
-        await AsyncStorage.setItem(USER_STORAGE_KEY, JSON.stringify(user));
+        await safeStorageSet(USER_STORAGE_KEY, JSON.stringify(user));
         return user;
       }
     } catch (e) {
@@ -167,7 +198,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       };
 
       set({ user: updatedUser, isLoading: false });
-      await AsyncStorage.setItem(USER_STORAGE_KEY, JSON.stringify(updatedUser));
+      await safeStorageSet(USER_STORAGE_KEY, JSON.stringify(updatedUser));
       return updatedUser;
     } catch (e) {
       const updatedUser: UserProfile = {
@@ -179,7 +210,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         propertyType: updates.propertyType || current.propertyType,
       };
       set({ user: updatedUser, isLoading: false });
-      await AsyncStorage.setItem(USER_STORAGE_KEY, JSON.stringify(updatedUser));
+      await safeStorageSet(USER_STORAGE_KEY, JSON.stringify(updatedUser));
       return updatedUser;
     }
   },
@@ -204,7 +235,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         isOnboarded: profile.completedOnboarding,
         isLoading: false,
       });
-      await AsyncStorage.setItem(USER_STORAGE_KEY, JSON.stringify(profile));
+      await safeStorageSet(USER_STORAGE_KEY, JSON.stringify(profile));
     } catch (e) {
       set({ isLoading: false });
       throw e;
@@ -228,7 +259,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         isAuthenticated: true,
         isOnboarded: false,
       });
-      await AsyncStorage.setItem(USER_STORAGE_KEY, JSON.stringify(user));
+      await safeStorageSet(USER_STORAGE_KEY, JSON.stringify(user));
 
       try {
         await userService.updateProfile({
@@ -254,12 +285,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     } catch (e) {
       console.warn('Firebase signOut notice:', e);
     }
-    try {
-      await AsyncStorage.removeItem(USER_STORAGE_KEY);
-      await AsyncStorage.removeItem('@voltflow_active_vehicle');
-    } catch {
-      // ignore
-    }
+    await safeStorageRemove(USER_STORAGE_KEY);
+    await safeStorageRemove(ACTIVE_VEHICLE_STORAGE_KEY);
     useVehicleStore.getState().resetVehicleState();
     set({
       user: null,
@@ -274,7 +301,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     if (!current) return;
     const updated = { ...current, ...data, completedOnboarding: true };
     set({ user: updated, isOnboarded: true });
-    await AsyncStorage.setItem(USER_STORAGE_KEY, JSON.stringify(updated));
+    await safeStorageSet(USER_STORAGE_KEY, JSON.stringify(updated));
 
     try {
       await userService.updateProfile({

@@ -3,7 +3,6 @@ import { Stack, router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { View, StyleSheet, ActivityIndicator } from 'react-native';
-import * as Notifications from 'expo-notifications';
 import { useAppContextStore } from '../src/store/useAppContextStore';
 import { useAuthStore } from '../src/store/useAuthStore';
 import { useVehicleStore } from '../src/store/useVehicleStore';
@@ -19,18 +18,30 @@ export default function RootLayout() {
     useAuthStore.getState().initialize();
     useVehicleStore.getState().fetchVehicles();
     websocketService.connect();
+    notificationService.initialize();
 
-    // Listen for notification taps to open notifications screen safely
-    const subscription = Notifications.addNotificationResponseReceivedListener(() => {
-      try {
-        router.push('/notifications');
-      } catch {
-        // Ignore navigation errors
-      }
-    });
+    // Listen for notification taps to open notifications screen safely (native builds only)
+    let isMounted = true;
+    let removeTapListener: (() => void) | undefined;
+    notificationService
+      .addNotificationResponseReceivedListener(() => {
+        try {
+          router.push('/notifications');
+        } catch {
+          // Ignore navigation errors
+        }
+      })
+      .then((cleanup) => {
+        if (isMounted) {
+          removeTapListener = cleanup;
+        } else {
+          cleanup?.();
+        }
+      });
 
     return () => {
-      subscription.remove();
+      isMounted = false;
+      removeTapListener?.();
       websocketService.disconnect();
     };
   }, []);

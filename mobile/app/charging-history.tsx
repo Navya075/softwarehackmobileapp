@@ -7,10 +7,14 @@ import { Header } from '../src/components/ui/Header';
 import { Card } from '../src/components/ui/Card';
 import { Badge } from '../src/components/ui/Badge';
 import { Button } from '../src/components/ui/Button';
+import { useBillingStore } from '../src/store/useBillingStore';
+import { InvoiceModal } from '../src/components/billing/InvoiceModal';
+import { BackendBillItem } from '../src/services/billingService';
 
 export default function ChargingHistoryScreen() {
   const [filterPeriod, setFilterPeriod] = useState<'day' | 'week' | 'month'>('month');
   const [selectedSession, setSelectedSession] = useState<HistorySessionItem | null>(null);
+  const [selectedInvoiceBill, setSelectedInvoiceBill] = useState<BackendBillItem | null>(null);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -148,18 +152,40 @@ export default function ChargingHistoryScreen() {
                   </Card>
                 )}
 
-                <Button
-                  title="Close Details"
-                  size="md"
-                  variant="secondary"
-                  onPress={() => setSelectedSession(null)}
-                  style={styles.modalCloseBtn}
-                />
+                <View style={{ gap: spacing.xs, marginTop: spacing.sm }}>
+                  <Button
+                    title="Generate / View Bill"
+                    size="md"
+                    variant="primary"
+                    icon={<Ionicons name="document-text-outline" size={16} color={colors.textInverse} />}
+                    onPress={() => {
+                      const bill = useBillingStore.getState().generateBillForSession(selectedSession);
+                      setSelectedSession(null);
+                      setSelectedInvoiceBill(bill);
+                    }}
+                    style={styles.modalCloseBtn}
+                  />
+
+                  <Button
+                    title="Close Details"
+                    size="md"
+                    variant="secondary"
+                    onPress={() => setSelectedSession(null)}
+                    style={styles.modalCloseBtn}
+                  />
+                </View>
               </ScrollView>
             </View>
           </View>
         </Modal>
       )}
+
+      {/* Full Invoice Modal */}
+      <InvoiceModal
+        visible={!!selectedInvoiceBill}
+        bill={selectedInvoiceBill}
+        onClose={() => setSelectedInvoiceBill(null)}
+      />
     </SafeAreaView>
   );
 }

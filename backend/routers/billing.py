@@ -23,3 +23,17 @@ async def get_invoice(bill_id: str, current_user: AuthUser = Depends(get_current
     if not bill:
         raise HTTPException(status_code=404, detail="Invoice not found")
     return bill
+
+@router.post("/pay/{bill_id}", response_model=BillItem)
+async def pay_bill(
+    bill_id: str,
+    payload: Optional[dict] = None,
+    current_user: AuthUser = Depends(get_current_user),
+):
+    """Processes demo payment for an unpaid bill and marks it as paid."""
+    method = (payload or {}).get("payment_method", "UPI (Demo)")
+    bill = await BillingService.pay_bill(bill_id, current_user.uid, method)
+    if not bill:
+        raise HTTPException(status_code=404, detail="Invoice not found")
+    return bill
+

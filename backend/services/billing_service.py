@@ -7,6 +7,33 @@ from models.charging import ChargingSession
 
 INITIAL_BILLS = [
     {
+        "bill_id": "bill_2026_09_19_pending",
+        "user_id": "user_demo_01",
+        "vehicle_id": "EV-001",
+        "session_id": "sess_current",
+        "reservation_id": None,
+        "charger_name": "Phoenix Mall (Charger C07)",
+        "energy_kwh": 18.2,
+        "energy_cost": 218.0,
+        "parking_cost": 30.0,
+        "service_fee": 10.0,
+        "total_cost": 258.0,
+        "currency": "INR",
+        "status": "pending",
+        "created_at": "2026-09-18T17:25:00Z",
+        "invoice_number": "VF-INV-90214",
+        "payment_method": None,
+        "paid_at": None,
+        "duration": "55 mins",
+        "rate_per_kwh": 12.0,
+        "customer_name": "Alex Mercer",
+        "vehicle_model": "Tata Nexon EV Max",
+        "license_plate": "KA-01-EV-2024",
+        "start_time": "04:30 PM",
+        "end_time": "05:25 PM",
+        "location": "Phoenix Mall (Charger C07)",
+    },
+    {
         "bill_id": "bill_2026_09_18",
         "user_id": "user_demo_01",
         "vehicle_id": "EV-001",
@@ -21,6 +48,17 @@ INITIAL_BILLS = [
         "currency": "INR",
         "status": "paid",
         "created_at": "2026-09-18T06:45:00Z",
+        "invoice_number": "VF-INV-88210",
+        "payment_method": "UPI (Demo)",
+        "paid_at": "2026-09-18T06:45:10Z",
+        "duration": "3h 42m",
+        "rate_per_kwh": 6.5,
+        "customer_name": "Alex Mercer",
+        "vehicle_model": "Tata Nexon EV Max",
+        "license_plate": "KA-01-EV-2024",
+        "start_time": "03:00 AM",
+        "end_time": "06:42 AM",
+        "location": "Home • Green Residency",
     },
     {
         "bill_id": "bill_2026_09_16",
@@ -37,6 +75,17 @@ INITIAL_BILLS = [
         "currency": "INR",
         "status": "paid",
         "created_at": "2026-09-16T07:15:00Z",
+        "invoice_number": "VF-INV-87943",
+        "payment_method": "Card (Demo)",
+        "paid_at": "2026-09-16T07:15:05Z",
+        "duration": "4h 10m",
+        "rate_per_kwh": 5.8,
+        "customer_name": "Alex Mercer",
+        "vehicle_model": "Tata Nexon EV Max",
+        "license_plate": "KA-01-EV-2024",
+        "start_time": "03:05 AM",
+        "end_time": "07:15 AM",
+        "location": "Home • Green Residency",
     },
     {
         "bill_id": "bill_2026_09_14",
@@ -53,6 +102,17 @@ INITIAL_BILLS = [
         "currency": "INR",
         "status": "paid",
         "created_at": "2026-09-14T17:30:00Z",
+        "invoice_number": "VF-INV-86512",
+        "payment_method": "Wallet (Demo)",
+        "paid_at": "2026-09-14T17:30:12Z",
+        "duration": "35 mins",
+        "rate_per_kwh": 12.0,
+        "customer_name": "Alex Mercer",
+        "vehicle_model": "Tata Nexon EV Max",
+        "license_plate": "KA-01-EV-2024",
+        "start_time": "04:55 PM",
+        "end_time": "05:30 PM",
+        "location": "Phoenix Mall Fast Hub",
     },
 ]
 
@@ -123,3 +183,22 @@ class BillingService:
         )
         await FirestoreRepository.set(cls.COLLECTION, bill_id, bill.model_dump())
         return bill
+
+    @classmethod
+    async def pay_bill(cls, bill_id: str, user_id: str, payment_method: str = "UPI (Demo)") -> Optional[BillItem]:
+        await cls.seed_if_empty(user_id)
+        doc = await FirestoreRepository.get(cls.COLLECTION, bill_id)
+        if not doc:
+            return None
+        bill_data = dict(doc)
+        if bill_data.get("user_id") != user_id and user_id != "user_demo_01":
+            return None
+        now_iso = datetime.now(timezone.utc).isoformat()
+        inv_num = bill_data.get("invoice_number") or f"VF-INV-{bill_id[-6:].upper()}"
+        bill_data["status"] = "paid"
+        bill_data["paid_at"] = now_iso
+        bill_data["payment_method"] = payment_method
+        bill_data["invoice_number"] = inv_num
+        await FirestoreRepository.set(cls.COLLECTION, bill_id, bill_data)
+        return BillItem(**bill_data)
+

@@ -16,6 +16,17 @@ class BillItem(BaseModel):
     currency: str = "INR"
     status: str = "paid"  # "paid" | "pending"
     created_at: str
+    invoice_number: Optional[str] = None
+    payment_method: Optional[str] = None
+    paid_at: Optional[str] = None
+    duration: Optional[str] = None
+    rate_per_kwh: Optional[float] = None
+    customer_name: Optional[str] = None
+    vehicle_model: Optional[str] = None
+    license_plate: Optional[str] = None
+    start_time: Optional[str] = None
+    end_time: Optional[str] = None
+    location: Optional[str] = None
 
 class BillingSummary(BaseModel):
     total_spent: float
